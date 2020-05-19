@@ -39,5 +39,10 @@ ADD static /app/static
 ADD templates /app/templates
 ADD *.py /app/
 
+# Add stress
+RUN apt-get update && apt-get install stress
+ADD start.sh .
+RUN chmod +x start.sh
+
 # Start server using gunicorn
-CMD gunicorn -b :$PORT --threads 4 --log-level=info flask_server:APP
+CMD ./start.sh
