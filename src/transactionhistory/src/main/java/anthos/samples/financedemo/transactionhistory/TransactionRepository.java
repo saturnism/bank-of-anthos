@@ -29,8 +29,14 @@ import org.springframework.stereotype.Repository;
 public interface TransactionRepository
         extends CrudRepository<Transaction, Long> {
 
-    @Query("SELECT MAX(transactionId) FROM Transaction")
-    long latestId();
+    /**
+     * Returns the id of the latest transaction, or -1 if no transactions exist.
+     */
+    @Query(value = "SELECT COALESCE("
+        + "(SELECT MAX(transaction_id) FROM transactions), "
+        + "CAST ('-1' AS BIGINT))",
+        nativeQuery = true)
+    Long latestId();
 
     @Query("SELECT t FROM Transaction t "
         + " WHERE (t.fromAccountNum=?1 AND t.fromRoutingNum=?2) "
